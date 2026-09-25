@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { getProducts, searchProducts, getProductsByCategory, deleteProduct, Product } from "@/lib/api/products";
 import { Loader2, Plus, Edit, Trash2 } from "lucide-react";
@@ -12,7 +12,7 @@ import { Pagination } from "@/components/Pagination";
 import { ProductFormModal } from "@/components/ProductFormModal";
 import { ConfirmModal } from "@/components/ConfirmModal";
 
-export default function ProductsPage() {
+function ProductsPageInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -242,5 +242,17 @@ export default function ProductsPage() {
         message={`Are you sure you want to delete "${deletingProduct?.title}"? This action cannot be undone.`}
       />
     </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center py-12">
+        <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <ProductsPageInner />
+    </Suspense>
   );
 }
